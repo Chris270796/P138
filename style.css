@@ -1,0 +1,35 @@
+.heading {
+    width: 100%;
+    text-align: left;
+}
+
+.heading h3 {
+    display: inline;
+}
+
+.heading button {
+    float: right;
+    border: 2px solid white;
+}
+
+.big_image {
+    width: 95%;
+    border-style: solid;
+    border-width: 7px;
+    border-radius: 50px;
+    border-color: darkorange;
+    margin-top: 20px;
+    padding: 5px;
+}
+
+#start,
+#status {
+    font-size: 22px;
+}
+
+h4 {
+    background-color: darkblue;
+    line-height: 2;
+    margin: 0px;
+    color: white;
+}
