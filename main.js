@@ -1,4 +1,8 @@
 /*created by prashant shukla */
+rightWristX = 0;
+rightWristY = 0;
+scoreRightWrist = 0;
+game_status = "";
 
 var paddle2 = 10,
     paddle1 = 10;
@@ -28,6 +32,7 @@ function setup() {
     var canvas = createCanvas(700, 600);
     canvas.parent('canvas');
     video = createCapture(VIDEO);
+    video.size(700, 600);
     video.hide();
 
     poseNet = ml5.poseNet('poseNet', modelLoaded);
@@ -41,12 +46,28 @@ function modelLoaded() {
 function gotPoses(results) {
     if (results < 0) {
         console.log(results);
+        rightWristX = results[0].pose.rightWrist.x;
+        rightWristY = results[0].pose.rigthWrist.y;
+        scoreRightWrist = results[0].pose.keypoints[10].score;
+        console.log(scoreRightWrist);
     }
+}
+
+function startGame() {
+    game_status = "start";
+    document.getElementById("status").innerHTML = "Game is loading";
 }
 
 
 function draw() {
+    if (scoreRightWrist > 0.2) {
+        fill("red");
+        stroke("red");
+        circle(rightWristX, rightWristY, 30);
+    }
+    if (game_status == "start") {
 
+    }
     background(0);
 
     fill("black");
