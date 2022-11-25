@@ -34,3 +34,7 @@ h4 {
     margin: 0px;
     color: white;
 }
+
+canvas {
+    border-color: coral;
+}

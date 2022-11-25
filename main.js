@@ -31,16 +31,28 @@ var ball = {
 function setup() {
     var canvas = createCanvas(700, 600);
     canvas.parent('canvas');
+
     video = createCapture(VIDEO);
     video.size(700, 600);
     video.hide();
 
-    poseNet = ml5.poseNet('poseNet', modelLoaded);
+    poseNet = ml5.poseNet('video', modelLoaded);
     poseNet.on('pose', gotPoses);
+}
+
+function preload() {
+    ball_touch_paddel = loadSound("ball_touch_paddel.wav");
+    missed = loadSound("missed.wav");
 }
 
 function modelLoaded() {
     console.log("Model Loaded");
+}
+
+function restart() {
+    pcscore = 0;
+    playscore = 0;
+    loop();
 }
 
 function gotPoses(results) {
@@ -60,52 +72,57 @@ function startGame() {
 
 
 function draw() {
-    if (scoreRightWrist > 0.2) {
-        fill("red");
-        stroke("red");
-        circle(rightWristX, rightWristY, 30);
-    }
     if (game_status == "start") {
+        if (scoreRightWrist > 0.2) {
+            fill("red");
+            stroke("red");
+            circle(rightWristX, rightWristY, 30);
+        }
+
+
+
+        background(0);
+        image(video, 0, 0, 700, 600)
+
+        fill("black");
+        stroke("black");
+        rect(680, 0, 20, 700);
+
+        fill("black");
+        stroke("black");
+        rect(0, 0, 20, 700);
+
+        //funtion paddleInCanvas call 
+        paddleInCanvas();
+
+        //left paddle
+        fill(250, 0, 0);
+        stroke(0, 0, 250);
+        strokeWeight(0.5);
+        paddle1Y = rightWristY;
+        rect(paddle1X, paddle1Y, paddle1, paddle1Height, 100);
+
+
+        //pc computer paddle
+        fill("#FFA500");
+        stroke("#FFA500");
+        var paddle2y = ball.y - paddle2Height / 2;
+        rect(paddle2Y, paddle2y, paddle2, paddle2Height, 100);
+
+        //function midline call
+        midline();
+
+        //funtion drawScore call 
+        drawScore();
+
+        //function models call  
+        models();
+
+        //function move call which in very important
+        move();
 
     }
-    background(0);
 
-    fill("black");
-    stroke("black");
-    rect(680, 0, 20, 700);
-
-    fill("black");
-    stroke("black");
-    rect(0, 0, 20, 700);
-
-    //funtion paddleInCanvas call 
-    paddleInCanvas();
-
-    //left paddle
-    fill(250, 0, 0);
-    stroke(0, 0, 250);
-    strokeWeight(0.5);
-    paddle1Y = mouseY;
-    rect(paddle1X, paddle1Y, paddle1, paddle1Height, 100);
-
-
-    //pc computer paddle
-    fill("#FFA500");
-    stroke("#FFA500");
-    var paddle2y = ball.y - paddle2Height / 2;
-    rect(paddle2Y, paddle2y, paddle2, paddle2Height, 100);
-
-    //function midline call
-    midline();
-
-    //funtion drawScore call 
-    drawScore();
-
-    //function models call  
-    models();
-
-    //function move call which in very important
-    move();
 }
 
 
@@ -157,9 +174,11 @@ function move() {
     }
     if (ball.x - 2.5 * ball.r / 2 < 0) {
         if (ball.y >= paddle1Y && ball.y <= paddle1Y + paddle1Height) {
+            ball_touch_paddel.play();
             ball.dx = -ball.dx + 0.5;
             playerscore++;
         } else {
+            missed.play();
             pcscore++;
             reset();
             navigator.vibrate(100);
@@ -173,7 +192,7 @@ function move() {
         stroke("white");
         textSize(25)
         text("Game Over!☹☹", width / 2, height / 2);
-        text("Reload The Page!", width / 2, height / 2 + 30)
+        text("Press Restart Button to play again!", width / 2, height / 2 + 30)
         noLoop();
         pcscore = 0;
     }
